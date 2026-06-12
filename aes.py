@@ -1,199 +1,116 @@
-# DES Structure Demonstration
+# ==========================================================
+# AES VISUALIZER (FINAL FIXED VERSION)
+# ==========================================================
 
-plaintext = "1010101011001100110011001111000011110000111100001010101010101010"
-key = "1111000011110000111100001111000011110000111100001111000011110000"
+plaintext = input("Enter 16-character Plain Text : ")
+key = input("Enter 16-character Key        : ")
 
-print("=" * 60)
-print("DES ENCRYPTION PROCESS")
-print("=" * 60)
+if len(plaintext) != 16 or len(key) != 16:
+    print("AES-128 requires exactly 16 characters.")
+    exit()
 
-# -----------------------------
-# STEP 1 : PLAINTEXT
-# -----------------------------
-print("\nSTEP 1: PLAINTEXT")
-print("Plaintext Length :", len(plaintext), "bits")
+# ==========================================================
+# STEP 1 : STATE MATRIX (STORE AS INTEGER FROM START)
+# ==========================================================
 
-# -----------------------------
-# STEP 2 : KEY
-# -----------------------------
-print("\nSTEP 2: KEY PROCESSING")
-print("Entered Key Length :", len(key), "bits")
-print("Parity Bits        : 8 bits")
-print("Effective Key      : 56 bits")
+print("\n========== STEP 1 : STATE MATRIX ==========")
+# matrix value will be stored in a ascii values
+state = [[ord(ch) for ch in plaintext[i:i+4]] for i in range(0, 16, 4)]
 
-#parity bits are ignored in this demonstration, so we will use the first 56 bits of the key
-effective_key = ""
+for row in state:
+    print(row)
 
-for i in range(64):
+# ==========================================================
+# STEP 2 : KEY EXPANSION
+# ==========================================================
 
-    if (i + 1) % 8 != 0:
-        effective_key += key[i]
+print("\n========== STEP 2 : KEY EXPANSION ==========")
 
-print("\nSTEP 2: EFFECTIVE KEY")
-print("Effective Key Length :", len(effective_key), "bits")
+round_key = [ord(c) for c in key]
 
-# -----------------------------
-# STEP 3 : SUBKEY GENERATION
-# -----------------------------
-print("\nSTEP 3: GENERATE 16 SUBKEYS")
+print("Original Key :", key)
 
-subkeys = [] #empty list to hold the 16 subkeys
+# simple key shift
+round_key = [(x + 1) % 256 for x in round_key]
 
-for i in range(16): 
-    subkey = format(i + 1, '048b') 
-    subkeys.append(subkey) #Adds the generated subkey into the list.
+print("Round Key (numeric):", round_key)
 
-print("16 Subkeys Generated")
-print("Each Subkey Length :", len(subkeys[0]), "bits")
+# ==========================================================
+# 10 ROUNDS AES
+# ==========================================================
 
-# -----------------------------
-# STEP 4 : INITIAL PERMUTATION
-# -----------------------------
-print("\nSTEP 4: INITIAL PERMUTATION (IP)")
+for round_no in range(10):
 
-ip = plaintext[::-1]  # simulated IP
+    print(f"\n\n================ ROUND {round_no+1} ================")
 
-print("64 bits rearranged")
-print("Output Length :", len(ip), "bits")
+    # ==========================================================
+    # SUBBYTES (simple demo: XOR with 0x1F)
+    # ==========================================================
+    print("\n========== STEP 3 : SUBBYTES ==========")
 
-# -----------------------------
-# STEP 5 : SPLIT
-# -----------------------------
-L = ip[:32]
-R = ip[32:]
+    for i in range(4):
+        for j in range(4):
+            state[i][j] = state[i][j] ^ 0x1F #hexadecimal value for demonstration
+            print(state[i][j], end=" ")
+        print()
 
-print("\nSTEP 5: SPLIT")
-#printing the length of l0 and r0
-print("L0 Length :", len(L), "bits")
-print("R0 Length :", len(R), "bits")
+    # ==========================================================
+    # SHIFTROWS
+    # ==========================================================
+    print("\n========== STEP 4 : SHIFTROWS ==========")
 
-# ====================================================
-# 16 ROUNDS
-# ====================================================
+    for i in range(4):
+        state[i] = state[i][i:] + state[i][:i]
 
-for round_no in range(16):
+    for row in state:
+        print(row)
 
-    print("\n" + "=" * 60) #formating for better readability
-    print(f"ROUND {round_no + 1}") #iteration upto 16 rounds
-    print("=" * 60)
+    # ==========================================================
+    # MIXCOLUMNS (XOR based simplified)
+    # ==========================================================
+    if round_no != 9:
 
-    print("\nInput:")
-    print("L =", len(L), "bits")
-    print("R =", len(R), "bits")
+        print("\n========== STEP 5 : MIXCOLUMNS ==========")
 
-    # ---------------------------------
-    # Expansion
-    # ---------------------------------
+        for col in range(4):
 
-    expanded_R = R + R[:16]
+            column = [state[row][col] for row in range(4)]
 
-    print("\nExpansion (E-Box)")
-    print("32 bits →", len(expanded_R), "bits")
+            mixed = [
+                column[0] ^ column[1],
+                column[1] ^ column[2],
+                column[2] ^ column[3],
+                column[3] ^ column[0]
+            ]
 
-    # ---------------------------------
-    # XOR WITH SUBKEY
-    # ---------------------------------
+            for row in range(4):
+                state[row][col] = mixed[row]
 
-    xor_result = "" #empty string to hold the result of the XOR operation
+            print(f"Column {col+1}:", mixed)
 
-    for a, b in zip(expanded_R, subkeys[round_no]):
-        xor_result += str(int(a) ^ int(b))
+    # ==========================================================
+    # ADDROUNDKEY
+    # ==========================================================
+    print("\n========== STEP 6 : ADDROUNDKEY ==========")
 
-    print("\nXOR with Subkey")
-    print("48 bits XOR 48 bits")
-    print("Output Length :", len(xor_result), "bits") #48 bits output from the XOR operation
+    k = 0
 
-    # ---------------------------------
-    # S-BOX STAGE
-    # ---------------------------------
+    for i in range(4):
+        for j in range(4):
 
-    print("\nS-BOXES")
+            state[i][j] = state[i][j] ^ round_key[k]
 
-    sbox_output = ""
+            print(state[i][j], end=" ")
+            k += 1
 
-    for sbox in range(8):
+        print()
 
-        six_bits = xor_result[sbox*6:(sbox+1)*6]
+# ==========================================================
+# FINAL OUTPUT
+# ==========================================================
 
-        # Simulated S-Box Output
-        four_bits = six_bits[:4]
+print("\n========== FINAL CIPHER ==========")
 
-        print(
-            f"S{sbox+1}:",
-            len(six_bits),
-            "bits ->",
-            len(four_bits),
-            "bits"
-        )
-
-        sbox_output += four_bits
-
-    print("Total Output :", len(sbox_output), "bits") # print the final output from the S-Box stage, which is 32 bits
-
-    # ---------------------------------
-    # P PERMUTATION
-    # ---------------------------------
-
-    permutation = sbox_output[::-1]
-
-    print("\nP-Permutation")
-    print("32 bits ->", len(permutation), "bits")
-
-    # ---------------------------------
-    # FEISTEL FUNCTION
-    # ---------------------------------
-
-    new_R = ""
-
-    for a, b in zip(L, permutation):
-        new_R += str(int(a) ^ int(b))
-
-    print("\nFeistel Operation")
-    print("L XOR F(R,K)")
-    print("Output Length :", len(new_R), "bits")
-
-    # ---------------------------------
-    # SWAP
-    # ---------------------------------
-
-    new_L = R
-
-    L = new_L
-    R = new_R
-
-    print("\nSwap")
-    print("New L =", len(L), "bits")
-    print("New R =", len(R), "bits")
-
-# ====================================================
-# AFTER ROUND 16
-# ====================================================
-
-print("\n" + "=" * 60)
-print("AFTER ROUND 16")
-print("=" * 60)
-
-print("L16 =", len(L), "bits")
-print("R16 =", len(R), "bits")
-
-# DES combines R16 + L16
-combined = R + L
-
-print("\nCombine R16 + L16")
-print("Length :", len(combined), "bits")
-
-# ====================================================
-# FINAL PERMUTATION
-# ====================================================
-
-ciphertext = combined[::-1]
-
-print("\nFINAL PERMUTATION (FP)")
-print("64 bits rearranged")
-
-print("\nCiphertext Length :", len(ciphertext), "bits")
-
-print("\nCIPHERTEXT:")
-print(ciphertext)
-
-print("\nDES ENCRYPTION COMPLETED")
+cipher_hex = "".join([format(state[i][j], '02x') for i in range(4) for j in range(4)])
+print("Cipher Text (Hex):", cipher_hex)
+print("\nAES Completed Successfully.")
