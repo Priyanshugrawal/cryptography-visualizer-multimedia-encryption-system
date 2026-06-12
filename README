@@ -1,0 +1,99 @@
+# Cryptography Visualizer & Multimedia Encryption System
+
+A Python-based cryptography learning toolkit that demonstrates classical and modern encryption algorithms through step-by-step execution. The project focuses on internal working visualization rather than black-box encryption.
+
+---
+
+## Overview
+
+This project implements multiple encryption techniques in a modular format to help understand how cryptographic systems transform data at each stage.
+
+It supports both text-based and multimedia data processing, including image and audio streams.
+
+The system is designed for academic learning and algorithm exploration.
+
+---
+
+## Implemented Modules
+
+### 1. Plaintext Encryption & Decryption
+- Character-level transformation logic
+- Basic reversible encryption model
+
+### 2. XOR Cipher
+- Bitwise XOR-based symmetric encryption
+- Demonstrates fundamental cryptographic operation
+
+### 3. Image Encryption
+- Pixel-level manipulation
+- Array-based transformation of image data
+
+### 4. Audio Encryption
+- Byte-stream processing of audio files
+- Demonstrates multimedia encryption pipeline
+
+### 5. DES (Data Encryption Standard - Simplified Model)
+- Block-based encryption structure
+- Feistel-style round simulation
+
+### 6. AES (Advanced Encryption Standard - Educational Model)
+- 10-round encryption flow simulation
+- Includes:
+  - State matrix formation
+  - SubBytes transformation (simplified)
+  - ShiftRows operation
+  - MixColumns (educational approximation)
+  - AddRoundKey using XOR
+
+### 7. RSA Cryptosystem
+- Public key cryptography implementation
+- Includes:
+  - Prime number validation
+  - Euler’s Totient Function (φ)
+  - Key pair generation (public/private keys)
+  - Encryption and decryption workflow
+
+---
+
+## Key Concepts Demonstrated
+
+- Symmetric and asymmetric encryption
+- Block cipher architecture
+- Bitwise operations (XOR)
+- Matrix-based transformations
+- Modular arithmetic in cryptography
+- Multi-round encryption systems
+- Multimedia data encryption principles
+
+---
+
+## Tech Stack
+
+- Python 3.x
+- Standard libraries only
+- File I/O operations
+- Mathematical computations
+
+---
+
+## Project Structure
+├── aes.py
+├── des.py
+├── rsa.py
+├── xor_cipher.py
+├── text_encryption.py
+├── image_encryption.py
+├── audio_encryption.py
+└── README.md
+
+---
+
+## Execution
+
+Run individual modules using:
+
+```bash
+python aes.py
+python rsa.py
+python des.py
+python xor_cipher.py
