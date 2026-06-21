@@ -50,7 +50,7 @@ for round_no in range(10):
 
     for i in range(4):
         for j in range(4):
-            state[i][j] = state[i][j] ^ 0x1F #hexadecimal value for demonstration
+            state[i][j] = state[i][j] ^ 0x1F #hexadecimal value for demonstration xoe with 31
             print(state[i][j], end=" ")
         print()
 

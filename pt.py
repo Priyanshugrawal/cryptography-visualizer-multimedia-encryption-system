@@ -2,7 +2,7 @@ text = input("Enter Plain Text: ").upper()
 
 cipher = ""
 
-print("\nCharacter\tASCII\t+3\tNew ASCII\tNew Char")
+print("\nCharacter\tASCII\t+3\tNew ASCII\tNew Char") #COLUMNS
 
 for ch in text:
     ascii_value = ord(ch)

@@ -26,7 +26,7 @@ effective_key = ""
 
 for i in range(64):
 
-    if (i + 1) % 8 != 0:
+    if (i + 1) % 8 != 0:     # Skip parity bits (every 8th bit)
         effective_key += key[i]
 
 print("\nSTEP 2: EFFECTIVE KEY")
@@ -51,7 +51,7 @@ print("Each Subkey Length :", len(subkeys[0]), "bits")
 # -----------------------------
 print("\nSTEP 4: INITIAL PERMUTATION (IP)")
 
-ip = plaintext[::-1]  # simulated IP
+ip = plaintext[::-1]  # slicing and making it reverse
 
 print("64 bits rearranged")
 print("Output Length :", len(ip), "bits")
@@ -113,10 +113,10 @@ for round_no in range(16):
 
     for sbox in range(8):
 
-        six_bits = xor_result[sbox*6:(sbox+1)*6]
+        six_bits = xor_result[sbox*6:(sbox+1)*6] #[start:end] python slicing end is not included
 
         # Simulated S-Box Output
-        four_bits = six_bits[:4]
+        four_bits = six_bits[:4] # for geting again 32 bits 
 
         print(
             f"S{sbox+1}:",
@@ -129,7 +129,6 @@ for round_no in range(16):
         sbox_output += four_bits
 
     print("Total Output :", len(sbox_output), "bits") # print the final output from the S-Box stage, which is 32 bits
-
     # ---------------------------------
     # P PERMUTATION
     # ---------------------------------
@@ -138,6 +137,7 @@ for round_no in range(16):
 
     print("\nP-Permutation")
     print("32 bits ->", len(permutation), "bits")
+    print (f"F(R{round_no}, K{round_no}) = {permutation}")
 
     # ---------------------------------
     # FEISTEL FUNCTION
